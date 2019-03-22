@@ -26,9 +26,6 @@ cards.forEach(function(card){
         if(!flippedCard){
             flippedCard=true;
             firstCard=this;
-            // this.classList.toggle("open");
-            // this.classList.toggle("show");
-            // this.classList.toggle("disabled")
             console.log(flippedCard, this)
         }else{
             //second click
