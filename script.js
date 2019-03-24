@@ -1,102 +1,59 @@
-window.onload=function(){
-var cards = document.querySelectorAll(".card")
-var count=document.getElementById("flips")
-var val = count.innerHTML
-var begin = document.getElementById("button")
+var cards = document.querySelectorAll('.card');
 
-//when start is selected the game resets
-// begin.addEventListener("click", function(){
-    
-// })
+var count=document.getElementById("flips");
+var val = count.innerHTML;
 
-cards.forEach(function(card){
-    card.addEventListener('click', function(){
-    // increasing num of flips
-        val++
-        document.getElementById("flips").innerHTML=val
-    
-    
-        this.classList.add("flip");
-    
-        var flippedCard = false;    
-        var firstCard;
-        var secondCard;
+var hasFlippedCard = false;
+var lockBoard = false;
+var firstCard, secondCard;
 
-        //first click
-        if(!flippedCard){
-            flippedCard=true;
-            firstCard=this;
-            console.log(flippedCard, this)
-        }else{
-            //second click
-            flippedCard = false;
-            secondCard = this;
-            console.log(firstCard, secondCard);
-            matchCheck();
-    }
-    })
-})
+function flipCard() {
+    val++
+    document.getElementById("flips").innerHTML=val
+  if (lockBoard) return;
+  if (this === firstCard) return;
 
-function matchCheck(c1, c2){
-    var isMatch = c1.classList === c2.classList
-    isMatch ? console.log(true) : console.log(false)
+  this.classList.add('flip');
+
+  if (!hasFlippedCard) {
+    hasFlippedCard = true;
+    firstCard = this;
+
+    return;
+  }
+
+  secondCard = this;
+  checkForMatch();
 }
 
-//if not match
-// function turnOver(){
+function checkForMatch() {
+  let isMatch = firstCard.dataset.img === secondCard.dataset.img;
 
-// }
-
-//if match
-function correct(c1, c2){
-    c1.removeEventListener('click', function(){
-        this.classList.toggle("flip");
-        
-        // increasing num of flips
-        val++
-        document.getElementById("flips").innerHTML=val
-        
-        var flippedCard = false;    
-        var firstCard;
-        var secondCard;
-    
-        //first click
-        if(!flippedCard){
-            flippedCard=true;
-            firstCard=this;
-            // console.log(firstCard, this)
-        }else{
-        //second click
-            flippedCard = false;
-            secondCard = this;
-            console.log(firstCard, secondCard);
-            matchCheck();
-        }
-    })
-
-    c2.removeEventListener('click', function(){
-        this.classList.toggle("flip");
-        
-        // increasing num of flips
-        val++
-        document.getElementById("flips").innerHTML=val
-        
-        var flippedCard = false;    
-        var firstCard;
-        var secondCard;
-    
-        //first click
-        if(!flippedCard){
-            flippedCard=true;
-            firstCard=this;
-            // console.log(firstCard, this)
-        }else{
-        //second click
-            flippedCard = false;
-            secondCard = this;
-            console.log(firstCard, secondCard);
-            matchCheck();
-        }
-    })
+  isMatch ? disableCards() : unflipCards();
 }
+
+function disableCards() {
+
+  firstCard.removeEventListener('click', flipCard);
+  secondCard.removeEventListener('click', flipCard);
+
+  resetBoard();
 }
+
+function unflipCards() {
+  lockBoard = true;
+
+  setTimeout(() => {
+    firstCard.classList.remove('flip');
+    secondCard.classList.remove('flip');
+
+    resetBoard();
+  }, 1500);
+}
+
+function resetBoard() {
+  [hasFlippedCard, lockBoard] = [false, false];
+  [firstCard, secondCard] = [null, null];
+}
+
+cards.forEach(card => card.addEventListener('click', flipCard));
